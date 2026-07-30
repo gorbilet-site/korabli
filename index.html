@@ -252,7 +252,7 @@ section{position:relative}
 .gps-status.error{background:rgba(230,46,46,.94)}
 @media(max-width:560px){
   .map-shell{border-radius:22px}
-  .map-canvas{height:min(430px,55svh);min-height:360px}
+  .map-canvas{height:min(390px,52svh);min-height:320px}
   #ymap.map-mobile-safe,
   #ymap.map-mobile-safe.leaflet-touch-drag,
   #ymap.map-mobile-safe.leaflet-touch-drag.leaflet-touch-zoom{touch-action:pan-y!important}
@@ -483,6 +483,7 @@ const TYPE_LABEL={teplohod:'Теплоход',kater:'Катер',sup:'САП',me
 const CENTER=[59.9386,30.3141];
 const START_ZOOM=12;
 const MOBILE_START_ZOOM=11;
+const MOBILE_MAX_ZOOM=15;
 const MOBILE_MAP_QUERY='(max-width: 560px)';
 const PIN_SVG='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 64 88"><ellipse cx="32" cy="82" rx="6" ry="2.2" fill="rgba(0,0,0,0.28)"/><circle cx="32" cy="80" r="3.2" fill="#0B1220" stroke="#fff" stroke-width="1.4"/><g transform="translate(8,2)"><path d="M24 0c11.4 17 24 20 24 40 0 13.1-10.7 24-24 24S0 53.1 0 40c0-8.6 4-13.1 8.6-17.1 1.1 5.1 4 8 6.9 9.1-2.3-11.4 4-20.6 8.6-32z" fill="#FF3D3D" stroke="#fff" stroke-width="3"/><circle cx="24" cy="42" r="6.3" fill="#fff"/></g></svg>');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -497,7 +498,7 @@ function isMobileMap(){
 function makePierIcon(){
   if(!window.L)return null;
   const mobile=isMobileMap();
-  const size=mobile?[22,30]:[32,44];
+  const size=mobile?[16,22]:[32,44];
   return L.icon({
     iconUrl:PIN_SVG,
     iconSize:size,
@@ -520,6 +521,7 @@ function syncMobileMapMode(rebuildPins=true){
   setInteraction(ymap.boxZoom,!mobile);
   setInteraction(ymap.keyboard,!mobile);
   setInteraction(ymap.scrollWheelZoom,false);
+  ymap.setMaxZoom(mobile?MOBILE_MAX_ZOOM:19);
   if(ymap.zoomControl)ymap.zoomControl.setPosition(mobile?'bottomleft':'topleft');
   if(lastMobileMapMode!==mobile){
     lastMobileMapMode=mobile;
@@ -607,6 +609,12 @@ function initMap(){
     zoomControl:true,
     preferCanvas:true,
     attributionControl:true,
+    zoomAnimation:false,
+    fadeAnimation:false,
+    markerZoomAnimation:false,
+    zoomSnap:1,
+    zoomDelta:1,
+    maxZoom:mobile?MOBILE_MAX_ZOOM:19,
     scrollWheelZoom:false,
     dragging:!mobile,
     touchZoom:!mobile,
@@ -615,7 +623,13 @@ function initMap(){
     keyboard:!mobile
   });
   const tiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:19,attribution:'&copy; OpenStreetMap'
+    maxZoom:19,
+    maxNativeZoom:19,
+    detectRetina:true,
+    updateWhenZooming:false,
+    updateWhenIdle:true,
+    keepBuffer:4,
+    attribution:'&copy; OpenStreetMap'
   }).addTo(ymap);
   ymap.attributionControl.setPrefix(false);
   pierLayer=L.layerGroup().addTo(ymap);
