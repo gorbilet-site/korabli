@@ -232,6 +232,8 @@ section{position:relative}
 .map-zoom button:hover{background:var(--paper);color:var(--red)}
 .map-zoom button+button{border-top:1px solid var(--line)}
 .map-zoom button:disabled{opacity:.55;cursor:not-allowed}
+.pier-pin-label{pointer-events:none;max-width:178px;width:max-content;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(230,236,243,.96);box-shadow:0 10px 24px rgba(13,40,80,.18);color:var(--ink);font:800 12px/1.15 'Inter',sans-serif;letter-spacing:-.01em;white-space:normal;opacity:0;transform:translateY(-50%);transition:opacity .18s ease}
+#ymap.map-label-mode .pier-pin-label{opacity:1}
 .gb-balloon{font-family:'Inter',sans-serif;width:248px;max-height:280px;overflow-y:auto;padding:2px}
 .gb-balloon__type{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--water-4)}
 .gb-balloon__name{font-size:15px;font-weight:800;margin:2px 0 4px;line-height:1.2;color:var(--ink)}
@@ -253,6 +255,7 @@ section{position:relative}
   .map-canvas{height:min(390px,52svh);min-height:320px}
   .map-zoom{left:12px;right:auto;bottom:12px}
   .map-zoom button{width:38px;height:38px;font-size:22px}
+  .pier-pin-label{max-width:132px;padding:5px 8px;font-size:10.5px;line-height:1.12}
   .gps-btn{right:12px;bottom:12px;width:38px;height:38px}
   .gps-status{left:12px;right:62px;bottom:14px;max-width:none}
 }
@@ -490,14 +493,56 @@ function balloonHTML(p){
   const acts=p.a.map(a=>`<a class="gb-action" href="${esc(a.u)}" target="_blank" rel="noopener"><span class="gb-action__title">${esc(a.t)}</span>${a.d?`<span class="gb-action__disc">−${a.d}%</span>`:''}</a>`).join('');
   return `<div class="gb-balloon"><div class="gb-balloon__type">${TYPE_LABEL[p.t]||''}</div><div class="gb-balloon__name">${esc(p.n)}</div>${p.m?`<div class="gb-balloon__metro">М ${esc(p.m)}</div>`:''}${acts}</div>`;
 }
-let ymap,pierObjects=[],userPM=null,curFilter='all',mapResizeTimer,gpsStatusTimer,lastMobileMapMode=null;
+let ymap,pierObjects=[],userPM=null,curFilter='all',mapResizeTimer,gpsStatusTimer,lastMobileMapMode=null,lastMarkerMode=null;
 function isMobileMap(){
   return window.matchMedia?window.matchMedia(MOBILE_MAP_QUERY).matches:window.innerWidth<=560;
 }
+function markerMode(){
+  const z=ymap&&ymap.getZoom?ymap.getZoom():(isMobileMap()?MOBILE_START_ZOOM:START_ZOOM);
+  if(z>=17)return'detail';
+  if(z>=15)return'mid';
+  return'normal';
+}
 function makePierIcon(){
   const mobile=isMobileMap();
-  const size=mobile?[16,22]:[32,44];
-  return {size,offset:[-Math.round(size[0]/2),-size[1]+3]};
+  const mode=markerMode();
+  const size=mode==='detail'
+    ?(mobile?[14,19]:[24,33])
+    :mode==='mid'
+      ?(mobile?[15,21]:[28,39])
+      :(mobile?[16,22]:[32,44]);
+  return {
+    size,
+    offset:[-Math.round(size[0]/2),-size[1]+3],
+    labelOffset:[Math.round(size[0]/2)+6,-Math.round(size[1]*.72)]
+  };
+}
+function pierLabel(name){
+  let s=String(name)
+    .replace(/^Причал\s+(?:№\d+\s+)?(?:на\s+)?/i,'')
+    .replace(/^САП-старт\s+/i,'САП · ')
+    .replace(/^Яхт-клуб\s+/i,'Яхт-клуб · ')
+    .replace(/^Санкт-Петербургский\s+речной\s+яхт-клуб$/i,'Речной яхт-клуб')
+    .replace(/[«»]/g,'')
+    .replace(/\s*\([^)]*\)/g,'')
+    .replace(/набережной реки/gi,'наб. р.')
+    .replace(/набережной/gi,'наб.')
+    .replace(/набережная/gi,'наб.')
+    .replace(/канала/gi,'кан.')
+    .replace(/\s+/g,' ')
+    .trim();
+  if(!/^Причал|^САП|^Яхт-клуб|^Речной/i.test(s))s='Причал · '+s;
+  return s.length>46?s.slice(0,43).trim()+'…':s;
+}
+function syncMarkerDetailMode(){
+  if(!ymap)return;
+  const detail=ymap.getZoom()>=16;
+  document.getElementById('ymap').classList.toggle('map-label-mode',detail);
+  const mode=markerMode();
+  if(mode!==lastMarkerMode){
+    lastMarkerMode=mode;
+    buildPins(false);
+  }
 }
 function setYBehavior(name,enabled){
   if(!ymap||!ymap.behaviors)return;
@@ -553,16 +598,20 @@ function buildPins(recenter=true){
   if(!ymap||!window.ymaps)return;
   pierObjects.forEach(pm=>ymap.geoObjects.remove(pm));
   pierObjects=[];
+  lastMarkerMode=markerMode();
   const icon=makePierIcon();
   visiblePiers().forEach(p=>{
     const pm=new ymaps.Placemark(p.ll,{
       balloonContent:balloonHTML(p),
-      hintContent:p.n
+      hintContent:p.n,
+      iconContent:pierLabel(p.n)
     },{
-      iconLayout:'default#image',
+      iconLayout:'default#imageWithContent',
       iconImageHref:PIN_SVG,
       iconImageSize:icon.size,
       iconImageOffset:icon.offset,
+      iconContentLayout:ymaps.templateLayoutFactory.createClass('<div class="pier-pin-label">$[properties.iconContent]</div>'),
+      iconContentOffset:icon.labelOffset,
       balloonPanelMaxMapArea:isMobileMap()?Infinity:0,
       hideIconOnBalloonOpen:false,
       openEmptyBalloon:false
@@ -622,6 +671,10 @@ function initMap(){
   });
   syncMobileMapMode(false);
   buildPins(false);
+  syncMarkerDetailMode();
+  ymap.events.add('boundschange',e=>{
+    if(e.get('newZoom')!==e.get('oldZoom'))syncMarkerDetailMode();
+  });
   document.getElementById('gpsBtn').addEventListener('click',()=>locateUser(true));
   document.querySelectorAll('#mapZoom [data-zoom]').forEach(btn=>{
     btn.addEventListener('click',()=>{
