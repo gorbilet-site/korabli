@@ -553,6 +553,7 @@ function initMap(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,attribution:'&copy; OpenStreetMap'
   }).addTo(ymap);
+  ymap.attributionControl.setPrefix(false);
   pierLayer=L.layerGroup().addTo(ymap);
   buildPins(true);
   document.getElementById('zoomInBtn').addEventListener('click',()=>ymap.zoomIn());
