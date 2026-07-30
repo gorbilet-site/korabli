@@ -237,8 +237,8 @@ section{position:relative}
 .leaflet-marker-icon.gb-pin-icon{display:grid!important;place-items:center!important;background:transparent!important;border:0!important}
 .gb-pin-dot{display:block;position:relative;width:18px;height:18px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 3px 10px rgba(13,40,80,.34)}
 .gb-pin-dot::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
-.leaflet-tooltip.gb-pier-label{max-width:210px;padding:5px 8px!important;border:1px solid rgba(230,236,243,.95)!important;border-radius:999px!important;background:rgba(255,255,255,.94)!important;color:var(--ink)!important;box-shadow:0 4px 14px rgba(13,40,80,.15)!important;font:800 11px/1.2 'Inter',sans-serif!important;white-space:normal!important}
-.leaflet-tooltip.gb-pier-label::before{display:none!important}
+.leaflet-tooltip.gb-pier-hover{max-width:220px;padding:5px 8px!important;border:1px solid rgba(230,236,243,.95)!important;border-radius:999px!important;background:rgba(255,255,255,.96)!important;color:var(--ink)!important;box-shadow:0 4px 14px rgba(13,40,80,.15)!important;font:800 11px/1.2 'Inter',sans-serif!important;white-space:normal!important}
+.leaflet-tooltip.gb-pier-hover::before{display:none!important}
 .gb-balloon{font-family:'Inter',sans-serif;width:248px;max-height:280px;overflow-y:auto;padding:2px}
 .gb-balloon__type{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--water-4)}
 .gb-balloon__name{font-size:15px;font-weight:800;margin:2px 0 4px;line-height:1.2;color:var(--ink)}
@@ -264,7 +264,7 @@ section{position:relative}
   .leaflet-control-zoom a{width:36px!important;height:36px!important;line-height:36px!important;font-size:22px!important}
   .gb-pin-dot{width:12px;height:12px;border-width:2px;box-shadow:0 2px 8px rgba(13,40,80,.32)}
   .gb-pin-dot::after{width:4px;height:4px}
-  .leaflet-tooltip.gb-pier-label{max-width:150px;padding:4px 6px!important;font-size:10px!important;line-height:1.15!important}
+  .leaflet-tooltip.gb-pier-hover{max-width:150px;padding:4px 6px!important;font-size:10px!important;line-height:1.15!important}
   .leaflet-bottom.leaflet-left .leaflet-control{margin-left:12px;margin-bottom:12px}
   .gps-btn{right:12px;bottom:12px;width:38px;height:38px}
   .gps-status{left:12px;right:62px;bottom:14px;max-width:none}
@@ -578,10 +578,9 @@ function buildPins(recenter=true){
   pierLayer.clearLayers();
   const mobile=isMobileMap();
   const icon=makePierIcon();
-  const labelOffset=mobile?[15,0]:[19,0];
   visiblePiers().forEach(p=>{
     L.marker(p.ll,{icon:icon,title:p.n,alt:p.n,riseOnHover:true})
-      .bindTooltip(shortPierName(p),{permanent:true,direction:'right',offset:labelOffset,opacity:1,className:'gb-pier-label'})
+      .bindTooltip(shortPierName(p),{direction:'top',offset:mobile?[0,-18]:[0,-22],opacity:.98,className:'gb-pier-hover'})
       .bindPopup(balloonHTML(p),{maxWidth:280,minWidth:248,autoPanPadding:mobile?[18,18]:[32,32]})
       .addTo(pierLayer);
   });
