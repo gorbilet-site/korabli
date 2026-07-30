@@ -5,7 +5,7 @@
       59.9386,
       30.3141
     ],
-    "updated": "2026-06-19"
+    "updated": "2026-07-30"
   },
   "piers": [
     {
@@ -18,11 +18,6 @@
       ],
       "metro": "Сенная площадь / Технологический институт",
       "actions": [
-        {
-          "title": "Дневные прогулки по рекам и каналам",
-          "discount": 65,
-          "url": "https://gorbilet.ru/go/ENcp4Y"
-        },
         {
           "title": "Ночная прогулка с видом на разводные мосты",
           "discount": 55,
@@ -169,6 +164,23 @@
           "title": "Дневные прогулки на теплоходе",
           "discount": 50,
           "url": "https://gorbilet.ru/go/DVZnZM"
+        }
+      ]
+    },
+    {
+      "id": "prichal-rechnoy-tramvay-moika-75",
+      "name": "Причал на наб. р. Мойки, 75 («Речной трамвай»)",
+      "category": "teplohod",
+      "coords": [
+        59.933027,
+        30.313892
+      ],
+      "metro": "Адмиралтейская / Садовая",
+      "actions": [
+        {
+          "title": "Утренние и дневные прогулки на теплоходе от Красного моста",
+          "discount": 65,
+          "url": "https://gorbilet.ru/go/w5YeQ2"
         }
       ]
     },
@@ -407,7 +419,7 @@
         {
           "title": "Аренда катера «Счастье» с капитаном",
           "discount": 30,
-          "url": "https://gorbilet.ru/go/81uG4p"
+          "url": "https://gorbilet.ru/go/Z3fI6E"
         }
       ]
     },
@@ -424,7 +436,7 @@
         {
           "title": "Аренда катера «Лови лето»",
           "discount": 22,
-          "url": "https://gorbilet.ru/go/Uwl7X0"
+          "url": "https://gorbilet.ru/go/tEhLNG"
         }
       ]
     },
@@ -440,8 +452,8 @@
       "actions": [
         {
           "title": "Аренда катера «Сабай» с капитаном",
-          "discount": 32,
-          "url": "https://gorbilet.ru/go/FyZ7Pq"
+          "discount": 37,
+          "url": "https://gorbilet.ru/go/6Z00pL"
         },
         {
           "title": "Аренда катера «Ода» с капитаном",
@@ -450,8 +462,13 @@
         },
         {
           "title": "Аренда катера «Лоррет» с капитаном",
-          "discount": 32,
-          "url": "https://gorbilet.ru/go/4NH4jI"
+          "discount": 37,
+          "url": "https://gorbilet.ru/go/jXKrhT"
+        },
+        {
+          "title": "Аренда катера «Вайб» с капитаном",
+          "discount": 20,
+          "url": "https://gorbilet.ru/go/PRgsic"
         }
       ]
     },
@@ -512,7 +529,7 @@
         {
           "title": "Речная прогулка на катамаране «Шмель» с капитаном",
           "discount": 35,
-          "url": "https://gorbilet.ru/go/S7INpG"
+          "url": "https://gorbilet.ru/go/z94mpv"
         }
       ]
     },
@@ -530,6 +547,23 @@
           "title": "Аренда катера Bryant 212 с капитаном",
           "discount": 20,
           "url": "https://gorbilet.ru/go/EAidYV"
+        }
+      ]
+    },
+    {
+      "id": "prichal-fontanka-165",
+      "name": "Причал на набережной реки Фонтанки, 165",
+      "category": "kater",
+      "coords": [
+        59.916591,
+        30.293428
+      ],
+      "metro": "Балтийская / Технологический институт",
+      "actions": [
+        {
+          "title": "Аренда катера с капитаном",
+          "discount": 30,
+          "url": "https://gorbilet.ru/go/atHF9w"
         }
       ]
     },
@@ -552,6 +586,57 @@
           "title": "Аренда катера Larson 210 с капитаном",
           "discount": 38,
           "url": "https://gorbilet.ru/go/6teB5R"
+        }
+      ]
+    },
+    {
+      "id": "sup-start-kamenny-ostrov",
+      "name": "САП-старт «Каменный остров»",
+      "category": "sup",
+      "coords": [
+        59.973261,
+        30.281644
+      ],
+      "metro": "Крестовский остров",
+      "actions": [
+        {
+          "title": "Прогулка на сапах «Вокруг Каменного острова»",
+          "discount": 53,
+          "url": "https://gorbilet.ru/go/eXAuQ0"
+        }
+      ]
+    },
+    {
+      "id": "sup-start-istoricheskiy-tsentr",
+      "name": "САП-старт «Исторический центр»",
+      "category": "sup",
+      "coords": [
+        59.944161,
+        30.326033
+      ],
+      "metro": "Невский проспект / Гостиный двор",
+      "actions": [
+        {
+          "title": "Прогулка на сапах по рекам и каналам",
+          "discount": 62,
+          "url": "https://gorbilet.ru/go/TVvvNr"
+        }
+      ]
+    },
+    {
+      "id": "sup-start-zakat-na-lahte",
+      "name": "САП-старт «Закат на Лахте»",
+      "category": "sup",
+      "coords": [
+        60.006741,
+        30.198979
+      ],
+      "metro": "Беговая",
+      "actions": [
+        {
+          "title": "Прогулка на сап-борде «Закат на Лахте»",
+          "discount": 60,
+          "url": "https://gorbilet.ru/go/XEGcdD"
         }
       ]
     },

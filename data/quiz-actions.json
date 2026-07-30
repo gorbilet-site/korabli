@@ -1,20 +1,5 @@
 [
   {
-    "t": "Дневные прогулки по рекам и каналам",
-    "d": 65,
-    "u": "https://gorbilet.ru/go/ENcp4Y",
-    "tags": [
-      "day",
-      "sunset",
-      "cheap",
-      "tour",
-      "canals",
-      "single"
-    ],
-    "pier": "Причал на наб. Фонтанки, 121 («Нева-Кронверк»)",
-    "pr": 450
-  },
-  {
     "t": "Дневные прогулки на теплоходе по рекам и каналам",
     "d": 65,
     "u": "https://gorbilet.ru/go/uj1pGk",
@@ -26,7 +11,7 @@
       "single"
     ],
     "pier": "Причал «У Синего моста»",
-    "pr": 450
+    "pr": 455
   },
   {
     "t": "Ночная прогулка по рекам и каналам с видом на разводные мосты",
@@ -236,7 +221,7 @@
   {
     "t": "Аренда катера «Счастье» с капитаном",
     "d": 30,
-    "u": "https://gorbilet.ru/go/81uG4p",
+    "u": "https://gorbilet.ru/go/Z3fI6E",
     "tags": [
       "day",
       "sunset",
@@ -250,9 +235,9 @@
     "pr": 4990
   },
   {
-    "t": "Аренда катера «Лови лето» с капитаном",
+    "t": "Аренда катера «Лови лето»",
     "d": 22,
-    "u": "https://gorbilet.ru/go/Uwl7X0",
+    "u": "https://gorbilet.ru/go/tEhLNG",
     "tags": [
       "day",
       "sunset",
@@ -264,5 +249,128 @@
     ],
     "pier": "Яхт-клуб у Лопухинского сада",
     "pr": 6990
+  },
+  {
+    "t": "Утренние и дневные прогулки на теплоходе от Красного моста",
+    "d": 65,
+    "u": "https://gorbilet.ru/go/w5YeQ2",
+    "tags": [
+      "day",
+      "sunset",
+      "cheap",
+      "tour",
+      "canals",
+      "single"
+    ],
+    "pier": "Причал на наб. р. Мойки, 75 («Речной трамвай»)",
+    "pr": 455
+  },
+  {
+    "t": "Аренда катера «Лоррет» с капитаном",
+    "d": 37,
+    "u": "https://gorbilet.ru/go/jXKrhT",
+    "tags": [
+      "day",
+      "sunset",
+      "night",
+      "any",
+      "canals",
+      "unusual",
+      "single"
+    ],
+    "pier": "Причал на наб. канала Грибоедова, 73",
+    "pr": 4390
+  },
+  {
+    "t": "Аренда катера «Сабай» с капитаном",
+    "d": 37,
+    "u": "https://gorbilet.ru/go/6Z00pL",
+    "tags": [
+      "day",
+      "sunset",
+      "night",
+      "any",
+      "canals",
+      "unusual",
+      "single"
+    ],
+    "pier": "Причал на наб. канала Грибоедова, 73",
+    "pr": 4390
+  },
+  {
+    "t": "Аренда катера с капитаном",
+    "d": 30,
+    "u": "https://gorbilet.ru/go/atHF9w",
+    "tags": [
+      "day",
+      "sunset",
+      "night",
+      "any",
+      "canals",
+      "unusual",
+      "single"
+    ],
+    "pier": "Причал на набережной реки Фонтанки, 165",
+    "pr": 4900
+  },
+  {
+    "t": "Аренда катера «Вайб» с капитаном",
+    "d": 20,
+    "u": "https://gorbilet.ru/go/PRgsic",
+    "tags": [
+      "day",
+      "sunset",
+      "night",
+      "any",
+      "canals",
+      "unusual",
+      "single"
+    ],
+    "pier": "Причал на наб. канала Грибоедова, 73",
+    "pr": 4990
+  },
+  {
+    "t": "Прогулка на сапах «Вокруг Каменного острова»",
+    "d": 53,
+    "u": "https://gorbilet.ru/go/eXAuQ0",
+    "tags": [
+      "day",
+      "cheap",
+      "tour",
+      "canals",
+      "unusual",
+      "single"
+    ],
+    "pier": "САП-старт «Каменный остров»",
+    "pr": 1190
+  },
+  {
+    "t": "Прогулка на сапах по рекам и каналам",
+    "d": 62,
+    "u": "https://gorbilet.ru/go/TVvvNr",
+    "tags": [
+      "day",
+      "cheap",
+      "tour",
+      "canals",
+      "unusual",
+      "single"
+    ],
+    "pier": "САП-старт «Исторический центр»",
+    "pr": 1190
+  },
+  {
+    "t": "Прогулка на сап-борде «Закат на Лахте»",
+    "d": 60,
+    "u": "https://gorbilet.ru/go/XEGcdD",
+    "tags": [
+      "sunset",
+      "cheap",
+      "gulf",
+      "unusual",
+      "single"
+    ],
+    "pier": "САП-старт «Закат на Лахте»",
+    "pr": 1190
   }
 ]

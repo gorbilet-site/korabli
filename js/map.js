@@ -9,7 +9,7 @@
 
   // ---- настройки ----
   const PIN_ICON = 'assets/pin-flame.svg';
-  const TYPE_LABEL = { teplohod: 'Теплоход', kater: 'Катер', meteor: 'Метеор' };
+  const TYPE_LABEL = { teplohod: 'Теплоход', kater: 'Катер', sup: 'САП', meteor: 'Метеор' };
 
   let map, piersData, placemarks = [], userCoords = null, currentFilter = 'all';
 
