@@ -242,6 +242,11 @@ section{position:relative}
 .gb-action__title{font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.25}
 .gb-action__disc{font-size:12.5px;font-weight:800;color:var(--red);white-space:nowrap}
 /* GPS-кнопка */
+.map-zoom{position:absolute;right:14px;bottom:122px;z-index:6;display:grid;overflow:hidden;border-radius:12px;background:#fff;box-shadow:var(--shadow-m)}
+.map-zoom button{width:42px;height:42px;display:grid;place-items:center;border:0;background:#fff;color:var(--ink);font-size:26px;font-weight:800;line-height:1;cursor:pointer;transition:.15s}
+.map-zoom button+button{border-top:1px solid var(--line)}
+.map-zoom button:hover{background:var(--paper)}
+.map-zoom button:active{transform:scale(.96)}
 .gps-btn{position:absolute;right:14px;bottom:70px;z-index:6;width:42px;height:42px;display:grid;place-items:center;background:#fff;border-radius:12px;box-shadow:var(--shadow-m);transition:.15s}
 .gps-btn:hover{background:var(--paper)}
 .gps-btn svg{width:22px;height:22px;stroke:var(--water-4);fill:none;stroke-width:2}
@@ -404,6 +409,10 @@ section{position:relative}
       </div>
       <div class="map-canvas" id="mapCanvas">
         <div id="ymap" aria-label="Карта причалов Санкт-Петербурга"></div>
+        <div class="map-zoom" aria-label="Масштаб карты">
+          <button type="button" id="zoomInBtn" title="Увеличить карту" aria-label="Увеличить карту">+</button>
+          <button type="button" id="zoomOutBtn" title="Уменьшить карту" aria-label="Уменьшить карту">−</button>
+        </div>
         <button class="gps-btn" id="gpsBtn" title="Показать, где я" aria-label="Показать моё местоположение">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
         </button>
@@ -544,9 +553,10 @@ function initMap(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,attribution:'&copy; OpenStreetMap'
   }).addTo(ymap);
-  L.control.zoom({position:'bottomright'}).addTo(ymap);
   pierLayer=L.layerGroup().addTo(ymap);
   buildPins(true);
+  document.getElementById('zoomInBtn').addEventListener('click',()=>ymap.zoomIn());
+  document.getElementById('zoomOutBtn').addEventListener('click',()=>ymap.zoomOut());
   document.getElementById('gpsBtn').addEventListener('click',()=>locateUser(true));
   locateUser(false);
   const canvas=document.getElementById('mapCanvas');
