@@ -146,6 +146,25 @@ section{position:relative}
 .price .now small{font-size:13px;font-weight:600;color:var(--muted)}
 .buy-sm{background:var(--red);color:#fff;font-weight:700;font-size:14px;padding:11px 16px;border-radius:11px;transition:.2s;white-space:nowrap}
 .buy-sm:hover{background:var(--red-deep);transform:translateY(-2px)}
+.special-offers{padding:0 0 96px;background:var(--white)}
+.special-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.special-head .sec-head{margin-bottom:0}
+.special-note{max-width:330px;color:var(--ink-soft);font-size:15px;line-height:1.5}
+.offer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.offer-card{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(180deg,#fff,#F7FBFF);border:1px solid var(--line);box-shadow:var(--shadow-s);padding:18px;min-height:248px;display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s}
+.offer-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-l)}
+.offer-card::after{content:"";position:absolute;right:-38px;top:-42px;width:118px;height:118px;border-radius:50%;background:rgba(255,61,61,.08);pointer-events:none}
+.offer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.offer-kind{position:relative;z-index:1;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--water-4)}
+.offer-emoji{font-size:18px;line-height:1}
+.offer-discount{position:relative;z-index:1;background:var(--red);color:#fff;font-weight:900;font-size:12.5px;padding:6px 9px;border-radius:10px;box-shadow:var(--shadow-red);white-space:nowrap}
+.offer-card h3{position:relative;z-index:1;font-size:18px;font-weight:900;letter-spacing:-.02em;line-height:1.16;margin:0 0 12px}
+.offer-pier{position:relative;z-index:1;color:var(--muted);font-size:13px;line-height:1.35;margin-bottom:16px}
+.offer-price-row{position:relative;z-index:1;margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.offer-price .old{display:block;font-size:12.5px;color:var(--muted);text-decoration:line-through}
+.offer-price .now{font-size:23px;font-weight:900;letter-spacing:-.02em;white-space:nowrap}
+.offer-btn{background:var(--red);color:#fff;font-weight:800;font-size:13.5px;padding:11px 14px;border-radius:12px;white-space:nowrap;transition:.2s}
+.offer-btn:hover{background:var(--red-deep);transform:translateY(-2px)}
 
 /* QUIZ */
 .quiz{padding:96px 0;background:linear-gradient(180deg,var(--navy),var(--water-5));color:#fff;overflow:hidden;position:relative}
@@ -204,6 +223,8 @@ section{position:relative}
 @media(max-width:980px){
   .quiz-grid{grid-template-columns:1fr;gap:32px}
   .top-grid{grid-template-columns:repeat(2,1fr)}
+  .offer-grid{grid-template-columns:repeat(2,1fr)}
+  .special-head{align-items:flex-start;flex-direction:column}
   .hdr nav{display:none}
   .burger{display:flex}
 }
@@ -211,6 +232,8 @@ section{position:relative}
   .wrap{padding:0 16px}
   .hdr{padding:12px 16px}
   .top-grid{grid-template-columns:1fr}
+  .offer-grid{grid-template-columns:1fr}
+  .special-offers{padding:0 0 72px}
   .hero-stats{gap:10px}
   .idchip .big{font-size:24px}
   .band{padding:40px 26px}
@@ -307,6 +330,21 @@ section{position:relative}
       <p>Таких цен вы не найдёте больше нигде в городе</p>
     </div>
     <div class="top-grid" id="topGrid"></div>
+  </div>
+</section>
+
+<!-- SPECIAL OFFERS -->
+<section class="special-offers" id="special">
+  <div class="wrap">
+    <div class="special-head">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Катера и САПы</span>
+        <h2>Отдельные<br>предложения</h2>
+        <p>Все катера и SUP-прогулки из ваших ссылок вынесены в отдельные карточки.</p>
+      </div>
+      <p class="special-note reveal">Карточка ведёт сразу на нужное предложение Горбилета, а причал указан отдельно — без необходимости искать его в попапе карты.</p>
+    </div>
+    <div class="offer-grid" id="specialOffersGrid"></div>
   </div>
 </section>
 
@@ -600,6 +638,39 @@ TOP.forEach(b=>{
     </div>`;
   tg.appendChild(card);
 });
+
+const SPECIAL_OFFERS=[
+  {kind:'Катер',emoji:'🚤',name:'Аренда катера «Счастье» с капитаном',pier:'Причал на наб. канала Грибоедова, 54',old:'7000',now:'4990',disc:'−30%',url:'https://gorbilet.ru/go/Z3fI6E'},
+  {kind:'Катер',emoji:'🚤',name:'Аренда катера «Лоррет» с капитаном',pier:'Причал на наб. канала Грибоедова, 73',old:'7000',now:'4390',disc:'−37%',url:'https://gorbilet.ru/go/jXKrhT'},
+  {kind:'Катер',emoji:'🚤',name:'Аренда катера с капитаном',pier:'Причал на набережной реки Фонтанки, 165',old:'7000',now:'4900',disc:'−30%',url:'https://gorbilet.ru/go/atHF9w'},
+  {kind:'Катер',emoji:'🚤',name:'Аренда катера «Сабай» с капитаном',pier:'Причал на наб. канала Грибоедова, 73',old:'7000',now:'4390',disc:'−37%',url:'https://gorbilet.ru/go/6Z00pL'},
+  {kind:'Катер',emoji:'🚤',name:'Речная прогулка на катамаране «Шмель» с капитаном',pier:'Причал «Летний сад»',old:'1150',now:'750',disc:'−35%',url:'https://gorbilet.ru/go/z94mpv'},
+  {kind:'Катер',emoji:'🚤',name:'Аренда катера «Лови лето»',pier:'Яхт-клуб у Лопухинского сада',old:'9000',now:'6990',disc:'−22%',url:'https://gorbilet.ru/go/tEhLNG'},
+  {kind:'Катер',emoji:'🚤',name:'Аренда катера «Вайб» с капитаном',pier:'Причал на наб. канала Грибоедова, 73',old:'6000',now:'4990',disc:'−20%',url:'https://gorbilet.ru/go/PRgsic'},
+  {kind:'САП',emoji:'🏄',name:'Прогулка на сапах «Вокруг Каменного острова»',pier:'САП-старт «Каменный остров»',old:'2500',now:'1190',disc:'−53%',url:'https://gorbilet.ru/go/eXAuQ0'},
+  {kind:'САП',emoji:'🏄',name:'Прогулка на сапах по рекам и каналам',pier:'САП-старт «Исторический центр»',old:'3200',now:'1190',disc:'−62%',url:'https://gorbilet.ru/go/TVvvNr'},
+  {kind:'САП',emoji:'🏄',name:'Прогулка на сап-борде «Закат на Лахте»',pier:'САП-старт «Закат на Лахте»',old:'3000',now:'1190',disc:'−60%',url:'https://gorbilet.ru/go/XEGcdD'}
+];
+const specialGrid=document.getElementById('specialOffersGrid');
+if(specialGrid){
+  SPECIAL_OFFERS.forEach(o=>{
+    const card=document.createElement('a');
+    card.className='offer-card reveal';
+    card.href=o.url;card.target='_blank';card.rel='noopener';
+    card.innerHTML=`
+      <div class="offer-head">
+        <span class="offer-kind"><span class="offer-emoji">${o.emoji}</span>${esc(o.kind)}</span>
+        <span class="offer-discount">${esc(o.disc)}</span>
+      </div>
+      <h3>${esc(o.name)}</h3>
+      <p class="offer-pier">${esc(o.pier)}</p>
+      <div class="offer-price-row">
+        <div class="offer-price">${o.old?`<span class="old">${esc(o.old)} ₽</span>`:''}<div class="now">от ${esc(o.now)} ₽</div></div>
+        <span class="offer-btn">Купить</span>
+      </div>`;
+    specialGrid.appendChild(card);
+  });
+}
 
 /* QUIZ — 4 questions */
 let qStep=0,answers=[];
