@@ -250,6 +250,17 @@ section{position:relative}
 .gps-status{position:absolute;right:68px;bottom:73px;z-index:6;max-width:250px;padding:9px 12px;border-radius:10px;background:rgba(11,18,32,.9);color:#fff;font-size:12px;font-weight:600;line-height:1.35;box-shadow:var(--shadow-m);opacity:0;transform:translateY(5px);pointer-events:none;transition:.2s}
 .gps-status.show{opacity:1;transform:none}
 .gps-status.error{background:rgba(230,46,46,.94)}
+@media(max-width:560px){
+  .map-shell{border-radius:22px}
+  .map-canvas{height:min(430px,55svh);min-height:360px}
+  #ymap.map-mobile-safe,
+  #ymap.map-mobile-safe.leaflet-touch-drag,
+  #ymap.map-mobile-safe.leaflet-touch-drag.leaflet-touch-zoom{touch-action:pan-y!important}
+  .leaflet-control-zoom a{width:36px!important;height:36px!important;line-height:36px!important;font-size:22px!important}
+  .leaflet-bottom.leaflet-left .leaflet-control{margin-left:12px;margin-bottom:12px}
+  .gps-btn{right:12px;bottom:12px;width:38px;height:38px}
+  .gps-status{left:12px;right:62px;bottom:14px;max-width:none}
+}
 </style>
 <script src="assets/vendor/leaflet.js"></script>
 </head>
@@ -471,19 +482,59 @@ const LANDMARKS=[{"name": "Эрмитаж / Зимний дворец", "coords"
 const TYPE_LABEL={teplohod:'Теплоход',kater:'Катер',sup:'САП',meteor:'Метеор'};
 const CENTER=[59.9386,30.3141];
 const START_ZOOM=12;
+const MOBILE_START_ZOOM=11;
+const MOBILE_MAP_QUERY='(max-width: 560px)';
 const PIN_SVG='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 64 88"><ellipse cx="32" cy="82" rx="6" ry="2.2" fill="rgba(0,0,0,0.28)"/><circle cx="32" cy="80" r="3.2" fill="#0B1220" stroke="#fff" stroke-width="1.4"/><g transform="translate(8,2)"><path d="M24 0c11.4 17 24 20 24 40 0 13.1-10.7 24-24 24S0 53.1 0 40c0-8.6 4-13.1 8.6-17.1 1.1 5.1 4 8 6.9 9.1-2.3-11.4 4-20.6 8.6-32z" fill="#FF3D3D" stroke="#fff" stroke-width="3"/><circle cx="24" cy="42" r="6.3" fill="#fff"/></g></svg>');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function balloonHTML(p){
   const acts=p.a.map(a=>`<a class="gb-action" href="${esc(a.u)}" target="_blank" rel="noopener"><span class="gb-action__title">${esc(a.t)}</span>${a.d?`<span class="gb-action__disc">−${a.d}%</span>`:''}</a>`).join('');
   return `<div class="gb-balloon"><div class="gb-balloon__type">${TYPE_LABEL[p.t]||''}</div><div class="gb-balloon__name">${esc(p.n)}</div>${p.m?`<div class="gb-balloon__metro">М ${esc(p.m)}</div>`:''}${acts}</div>`;
 }
-let ymap,pierLayer,userPM=null,curFilter='all',mapResizeTimer,gpsStatusTimer;
-const PIER_ICON=window.L?L.icon({
-  iconUrl:PIN_SVG,
-  iconSize:[32,44],
-  iconAnchor:[16,41],
-  popupAnchor:[0,-39]
-}):null;
+let ymap,pierLayer,userPM=null,curFilter='all',mapResizeTimer,gpsStatusTimer,lastMobileMapMode=null;
+function isMobileMap(){
+  return window.matchMedia?window.matchMedia(MOBILE_MAP_QUERY).matches:window.innerWidth<=560;
+}
+function makePierIcon(){
+  if(!window.L)return null;
+  const mobile=isMobileMap();
+  const size=mobile?[22,30]:[32,44];
+  return L.icon({
+    iconUrl:PIN_SVG,
+    iconSize:size,
+    iconAnchor:[size[0]/2,size[1]-3],
+    popupAnchor:[0,-size[1]+5]
+  });
+}
+function setInteraction(handler,enabled){
+  if(!handler)return;
+  const method=enabled?'enable':'disable';
+  if(typeof handler[method]==='function')handler[method]();
+}
+function syncMobileMapMode(rebuildPins=true){
+  if(!ymap)return;
+  const mobile=isMobileMap();
+  ymap.getContainer().classList.toggle('map-mobile-safe',mobile);
+  setInteraction(ymap.dragging,!mobile);
+  setInteraction(ymap.touchZoom,!mobile);
+  setInteraction(ymap.doubleClickZoom,!mobile);
+  setInteraction(ymap.boxZoom,!mobile);
+  setInteraction(ymap.keyboard,!mobile);
+  setInteraction(ymap.scrollWheelZoom,false);
+  if(ymap.zoomControl)ymap.zoomControl.setPosition(mobile?'bottomleft':'topleft');
+  if(lastMobileMapMode!==mobile){
+    lastMobileMapMode=mobile;
+    if(mobile&&ymap.getZoom()>MOBILE_START_ZOOM)ymap.setZoom(MOBILE_START_ZOOM,{animate:false});
+    if(rebuildPins&&pierLayer)buildPins(false);
+  }
+}
+function scheduleMapRefresh(){
+  if(!ymap)return;
+  clearTimeout(mapResizeTimer);
+  mapResizeTimer=setTimeout(()=>{
+    syncMobileMapMode(true);
+    ymap.invalidateSize(false);
+  },120);
+}
 function visiblePiers(){
   return PIERS.filter(p=>p.ll&&(curFilter==='all'||p.t===curFilter));
 }
@@ -491,17 +542,23 @@ function fitPins(animate=false){
   if(!ymap)return;
   const points=visiblePiers().map(p=>p.ll);
   if(!points.length)return;
+  const mobile=isMobileMap();
   ymap.fitBounds(L.latLngBounds(points),{
-    paddingTopLeft:[28,92],paddingBottomRight:[28,28],maxZoom:14,animate
+    paddingTopLeft:mobile?[18,84]:[28,92],
+    paddingBottomRight:mobile?[18,18]:[28,28],
+    maxZoom:mobile?12:14,
+    animate
   });
 }
 function buildPins(recenter=true){
   if(!pierLayer)return;
   pierLayer.clearLayers();
+  const mobile=isMobileMap();
+  const icon=makePierIcon();
   visiblePiers().forEach(p=>{
-    L.marker(p.ll,{icon:PIER_ICON,title:p.n,alt:p.n,riseOnHover:true})
-      .bindTooltip(p.n,{direction:'top',offset:[0,-38],opacity:.96})
-      .bindPopup(balloonHTML(p),{maxWidth:280,minWidth:248,autoPanPadding:[32,32]})
+    L.marker(p.ll,{icon:icon,title:p.n,alt:p.n,riseOnHover:true})
+      .bindTooltip(p.n,{direction:'top',offset:mobile?[0,-28]:[0,-38],opacity:.96})
+      .bindPopup(balloonHTML(p),{maxWidth:280,minWidth:248,autoPanPadding:mobile?[18,18]:[32,32]})
       .addTo(pierLayer);
   });
   if(recenter)requestAnimationFrame(()=>{ymap.invalidateSize();fitPins(false);});
@@ -536,7 +593,7 @@ function locateUser(recenter=true){
   navigator.geolocation.getCurrentPosition(pos=>{
     const ll=[pos.coords.latitude,pos.coords.longitude];
     placeUser(ll);
-    if(recenter)ymap.setView(ll,15,{animate:true});
+    if(recenter)ymap.setView(ll,isMobileMap()?13:15,{animate:true});
     if(btn){btn.classList.add('active');btn.disabled=false;btn.title='Показать, где я';}
     showGpsStatus('Ваше местоположение найдено',false,2600);
   },()=>{
@@ -545,24 +602,34 @@ function locateUser(recenter=true){
   },{enableHighAccuracy:true,timeout:8000,maximumAge:60000});
 }
 function initMap(){
-  ymap=L.map('ymap',{zoomControl:true,preferCanvas:true,attributionControl:true});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  const mobile=isMobileMap();
+  ymap=L.map('ymap',{
+    zoomControl:true,
+    preferCanvas:true,
+    attributionControl:true,
+    scrollWheelZoom:false,
+    dragging:!mobile,
+    touchZoom:!mobile,
+    doubleClickZoom:!mobile,
+    boxZoom:!mobile,
+    keyboard:!mobile
+  });
+  const tiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,attribution:'&copy; OpenStreetMap'
   }).addTo(ymap);
   ymap.attributionControl.setPrefix(false);
   pierLayer=L.layerGroup().addTo(ymap);
-  ymap.setView(CENTER,START_ZOOM);
+  ymap.setView(CENTER,mobile?MOBILE_START_ZOOM:START_ZOOM);
+  syncMobileMapMode(false);
   buildPins(false);
   document.getElementById('gpsBtn').addEventListener('click',()=>locateUser(true));
   locateUser(false);
   const canvas=document.getElementById('mapCanvas');
-  if(window.ResizeObserver)new ResizeObserver(()=>{
-    clearTimeout(mapResizeTimer);
-    mapResizeTimer=setTimeout(()=>ymap.invalidateSize(false),80);
-  }).observe(canvas);
-  addEventListener('load',()=>{
-    ymap.invalidateSize(false);
-  },{once:true});
+  tiles.on('load',scheduleMapRefresh);
+  if(window.ResizeObserver)new ResizeObserver(scheduleMapRefresh).observe(canvas);
+  addEventListener('resize',scheduleMapRefresh,{passive:true});
+  addEventListener('orientationchange',scheduleMapRefresh,{passive:true});
+  addEventListener('load',scheduleMapRefresh,{once:true});
 }
 // фильтры
 document.querySelectorAll('#filters .chip').forEach(c=>c.addEventListener('click',()=>{
