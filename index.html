@@ -226,7 +226,7 @@ section{position:relative}
 .toast .fl{width:18px;height:22px}
 /* ===== Карта причалов: балуны и иконки ===== */
 #ymap{position:absolute;inset:0;width:100%;height:100%;font-family:'Inter',sans-serif;background:var(--water-0)}
-#ymap.map-mobile-safe{touch-action:pan-y!important}
+#ymap.map-mobile-safe{touch-action:pan-y pinch-zoom!important}
 .map-zoom{position:absolute;right:14px;bottom:14px;z-index:7;display:flex;flex-direction:column;background:#fff;border-radius:12px;box-shadow:var(--shadow-m);overflow:hidden}
 .map-zoom button{width:42px;height:42px;font-size:24px;line-height:1;font-weight:800;color:var(--ink);display:grid;place-items:center;transition:.15s}
 .map-zoom button:hover{background:var(--paper);color:var(--red)}
@@ -485,7 +485,7 @@ const TYPE_LABEL={teplohod:'Теплоход',kater:'Катер',sup:'САП',me
 const CENTER=[59.9386,30.3141];
 const START_ZOOM=13;
 const MOBILE_START_ZOOM=12;
-const MOBILE_MAX_ZOOM=15;
+const MOBILE_MAX_ZOOM=19;
 const MOBILE_MAP_QUERY='(max-width: 560px)';
 const PIN_SVG='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 64 88"><ellipse cx="32" cy="82" rx="6" ry="2.2" fill="rgba(0,0,0,0.28)"/><circle cx="32" cy="80" r="3.2" fill="#0B1220" stroke="#fff" stroke-width="1.4"/><g transform="translate(8,2)"><path d="M24 0c11.4 17 24 20 24 40 0 13.1-10.7 24-24 24S0 53.1 0 40c0-8.6 4-13.1 8.6-17.1 1.1 5.1 4 8 6.9 9.1-2.3-11.4 4-20.6 8.6-32z" fill="#FF3D3D" stroke="#fff" stroke-width="3"/><circle cx="24" cy="42" r="6.3" fill="#fff"/></g></svg>');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -560,7 +560,7 @@ function syncMobileMapMode(rebuildPins=true){
   setYBehavior('dblClickZoom',!mobile);
   setYBehavior('rightMouseButtonMagnifier',false);
   setYBehavior('drag',!mobile);
-  setYBehavior('multiTouch',!mobile);
+  setYBehavior('multiTouch',true);
   if(lastMobileMapMode!==mobile){
     lastMobileMapMode=mobile;
     if(mobile&&ymap.getZoom()>MOBILE_MAX_ZOOM)ymap.setZoom(MOBILE_MAX_ZOOM,{duration:0});
