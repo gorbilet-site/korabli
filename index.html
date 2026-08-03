@@ -521,8 +521,8 @@ function makePierIcon(){
   const mobile=isMobileMap();
   const mode=markerMode();
   const size=mobile
-    ?(mode==='normal'?[22,30]:[26,36])
-    :[32,44];
+    ?(mode==='detail'?[30,42]:mode==='mid'?[28,39]:[22,30])
+    :(mode==='detail'?[36,50]:mode==='mid'?[34,47]:[32,44]);
   return {
     size,
     offset:[-Math.round(size[0]/2),-size[1]+3],
